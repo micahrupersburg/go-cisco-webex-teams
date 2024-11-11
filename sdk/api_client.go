@@ -1,6 +1,7 @@
 package webexteams
 
 import (
+	"net/http"
 	"os"
 
 	"github.com/go-resty/resty/v2"
@@ -45,8 +46,8 @@ func (s *Client) SetAuthToken(accessToken string) {
 
 // NewClient creates a new API client. Requires a userAgent string describing your application.
 // optionally a custom http.Client to allow for advanced features such as caching.
-func NewClient() *Client {
-	client := resty.New()
+func NewClient(hc *http.Client) *Client {
+	client := resty.NewWithClient(hc)
 	c := &Client{}
 	c.common.client = client
 	c.common.client.SetHostURL(apiURL)
