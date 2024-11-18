@@ -25,6 +25,8 @@ type Client struct {
 	Licenses          *LicensesService
 	Memberships       *MembershipsService
 	Messages          *MessagesService
+	Meetings          *MeetingsService
+	Participants      *ParticipantsService
 	Organizations     *OrganizationsService
 	People            *PeopleService
 	Recordings        *RecordingsService
@@ -64,6 +66,9 @@ func NewClient(hc *http.Client) *Client {
 	c.Licenses = (*LicensesService)(&c.common)
 	c.Memberships = (*MembershipsService)(&c.common)
 	c.Messages = (*MessagesService)(&c.common)
+	c.Meetings = (*MeetingsService)(&c.common)
+	c.Participants = (*ParticipantsService)(&c.common)
+
 	c.Organizations = (*OrganizationsService)(&c.common)
 	c.People = (*PeopleService)(&c.common)
 	c.Recordings = (*RecordingsService)(&c.common)

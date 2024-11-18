@@ -51,28 +51,28 @@ type MeetingTelephony struct {
 
 // Meeting is the Meeting definition
 type Meeting struct {
-	ID                       string             `json:"id,omitempty"`                          // Unique identifier for meeting
-	MeetingSeriesID          string             `json:"meetingSeriesId,omitempty"`             // Unique identifier for meeting series.
-	MeetingNumber            string             `json:"meetingNumber,omitempty"`               // Meeting number.
-	Title                    string             `json:"title,omitempty"`                       // Meeting title.
-	Agenda                   string             `json:"agenda,omitempty"`                      // Meeting agenda. The agenda can be a maximum of 2500 characters long.
-	Password                 string             `json:"password,omitempty"`                    //  Meeting password.
-	MeetingType              string             `json:"meetingType,omitempty"`                 // One Of: meetingSeries, scheduledMeeting o meeting
-	State                    string             `json:"state,omitempty"`                       // Meeting state.
-	Timezone                 string             `json:"timezone,omitempty"`                    // Time zone of start and end, conforming with the IANA time zone database.
-	Start                    time.Time          `json:"start,omitempty"`                       // Start time for meeting in ISO 8601 compliant format.
-	End                      time.Time          `json:"end,omitempty"`                         // End time for meeting in ISO 8601 compliant format.
-	Recurrence               string             `json:"recurrence,omitempty"`                  // Meeting series recurrence rule (conforming with RFC 2445), applying only to recurring meeting series.
-	HostUserID               string             `json:"hostUserId,omitempty"`                  // Unique identifier for meeting host.
-	HostDisplayName          string             `json:"hostDisplayName,omitempty"`             // Display name for meeting host.
-	HostEmail                string             `json:"hostEmail,omitempty"`                   // Email address for meeting host.
-	HostKey                  string             `json:"hostKey,omitempty"`                     // Key for joining meeting as host.
-	WebLink                  string             `json:"webLink,omitempty"`                     // Link to meeting information page where meeting client will be launched if the meeting is ready for start or join.
-	SIPAddress               string             `json:"sipAddress,omitempty"`                  // SIP address for callback from a video system.
-	DialInIPAddress          string             `json:"dialInIpAddress,omitempty"`             // IP address for callback from a video system.
-	EnabledAutoRecordMeeting bool               `json:"enabledAutoRecordingMeeting,omitempty"` // Whether or not meeting is recorded automatically.
-	AllowAnyUserToBeCoHost   bool               `json:"allowAnyUserToBeCoHost,omitempty"`      // Whether or not to allow any invitee to be a cohost
-	Telephony                []MeetingTelephony `json:"telephony,omitempty"`                   // Information for callbacks from meeting to phone or for joining a teleconference using a phone.
+	ID                       string    `json:"id,omitempty"`                          // Unique identifier for meeting
+	MeetingSeriesID          string    `json:"meetingSeriesId,omitempty"`             // Unique identifier for meeting series.
+	MeetingNumber            string    `json:"meetingNumber,omitempty"`               // Meeting number.
+	Title                    string    `json:"title,omitempty"`                       // Meeting title.
+	Agenda                   string    `json:"agenda,omitempty"`                      // Meeting agenda. The agenda can be a maximum of 2500 characters long.
+	Password                 string    `json:"password,omitempty"`                    //  Meeting password.
+	MeetingType              string    `json:"meetingType,omitempty"`                 // One Of: meetingSeries, scheduledMeeting o meeting
+	State                    string    `json:"state,omitempty"`                       // Meeting state.
+	Timezone                 string    `json:"timezone,omitempty"`                    // Time zone of start and end, conforming with the IANA time zone database.
+	Start                    time.Time `json:"start,omitempty"`                       // Start time for meeting in ISO 8601 compliant format.
+	End                      time.Time `json:"end,omitempty"`                         // End time for meeting in ISO 8601 compliant format.
+	Recurrence               string    `json:"recurrence,omitempty"`                  // Meeting series recurrence rule (conforming with RFC 2445), applying only to recurring meeting series.
+	HostUserID               string    `json:"hostUserId,omitempty"`                  // Unique identifier for meeting host.
+	HostDisplayName          string    `json:"hostDisplayName,omitempty"`             // Display name for meeting host.
+	HostEmail                string    `json:"hostEmail,omitempty"`                   // Email address for meeting host.
+	HostKey                  string    `json:"hostKey,omitempty"`                     // Key for joining meeting as host.
+	WebLink                  string    `json:"webLink,omitempty"`                     // Link to meeting information page where meeting client will be launched if the meeting is ready for start or join.
+	SIPAddress               string    `json:"sipAddress,omitempty"`                  // SIP address for callback from a video system.
+	DialInIPAddress          string    `json:"dialInIpAddress,omitempty"`             // IP address for callback from a video system.
+	EnabledAutoRecordMeeting bool      `json:"enabledAutoRecordingMeeting,omitempty"` // Whether or not meeting is recorded automatically.
+	AllowAnyUserToBeCoHost   bool      `json:"allowAnyUserToBeCoHost,omitempty"`      // Whether or not to allow any invitee to be a cohost
+	//Telephony                []MeetingTelephony `json:"telephony,omitempty"`                   // Information for callbacks from meeting to phone or for joining a teleconference using a phone.
 }
 
 // Meetings is the List of Meetings
@@ -203,7 +203,11 @@ type ListMeetingsQueryParams struct {
 	Before          time.Time `url:"before,omitempty"`          // List meetings sent before a date and time, in ISO8601 format. Format: yyyy-MM-dd&#39;T&#39;HH:mm:ss.SSSZ
 	BeforeMeeting   string    `url:"beforeMeeting,omitempty"`   // List meetings sent before a meeting, by ID.
 	Max             int       `url:"max,omitempty"`             // Limit the maximum number of items in the response.
+	State           string    `url:"state,omitempty"`           // List meetings by state
+	HostEmail       string    `url:"hostEmail,omitempty"`       // List meetings by host email
 	Paginate        bool      // Indicates if pagination is needed
+	MeetingType     string    `url:"meetingType,omitempty"` // List meetings by type
+	From            time.Time `url:"from,omitempty"`        // List meetings sent after a date and time, in ISO8601 format. Format: yyyy-MM-dd&#39;T&#39;HH:mm:ss.SSSZ
 }
 
 // ListMeetings Lists all meetings in a room. Each meeting will include content attachments if present.
@@ -224,7 +228,6 @@ func (s *MeetingsService) ListMeetings(queryParams *ListMeetingsQueryParams) (*M
 	path := "/meetings/"
 
 	queryParamsString, _ := query.Values(queryParams)
-
 	response, err := s.client.R().
 		SetQueryString(queryParamsString.Encode()).
 		SetResult(&Meetings{}).
